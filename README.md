@@ -1,7 +1,3 @@
-Here’s a clean, professional **README.md** you can use for your GitHub repo:
-
----
-
 # 🛡️ FinGuard
 
 **FinGuard** is a Machine Learning–powered financial risk analysis and fraud detection system.
