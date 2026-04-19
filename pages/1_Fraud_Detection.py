@@ -4,7 +4,7 @@ import numpy as np
 import sys
 import os
 
-from  Fraud_Detection_Model.src.model import make_prediction
+from Fraud_Detection_Model.src.model import make_prediction
 
 st.set_page_config(page_title="Fraud Detection · FinGuard 360", page_icon="💳", layout="wide")
 
@@ -16,22 +16,18 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Sidebar ───────────────────────────────────────────────────────
 with st.sidebar:
     st.image("https://img.icons8.com/color/96/shield.png", width=60)
     st.markdown("## 🛡️ FinGuard 360")
     st.markdown("---")
-    # الروابط دي بتشتغل أوتوماتيك لو الفولدرات مترتبة صح
-    st.page_link("app.py",                      label="🏠 Home Dashboard")
-    st.page_link("pages/1_Fraud_Detection.py",  label="💳 Fraud Detection")
-    st.page_link("pages/2_Credit_Risk.py",      label="🏦 Credit Risk")
+    st.page_link("app.py", label="🏠 Home Dashboard")
+    st.page_link("pages/1_Fraud_Detection.py", label="💳 Fraud Detection")
+    st.page_link("pages/2_Credit_Risk.py", label="🏦 Credit Risk")
 
-# ── Header ────────────────────────────────────────────────────────
 st.markdown("# 💳 Fraud Detection")
 st.markdown("Enter transaction details to check for suspicious activity.")
 st.markdown("---")
 
-# ── Input Form ────────────────────────────────────────────────────
 with st.form("fraud_form"):
     st.markdown("### 📝 Transaction Details")
     c1, c2 = st.columns(2)
@@ -47,9 +43,8 @@ with st.form("fraud_form"):
         oldDest   = st.number_input("Old Balance (Destination)", min_value=0.0, value=0.0, step=1000.0)
         newDest   = st.number_input("New Balance (Destination)", min_value=0.0, value=50000.0, step=1000.0)
 
-    submitted = st.form_submit_button("🔍 Predict Fraud", type="primary", use_container_width=True)
+    submitted = st.form_submit_button("🔍 Predict Fraud", type="primary", width="stretch")
 
-# ── Prediction ────────────────────────────────────────────────────
 if submitted:
     input_df = pd.DataFrame([{
         'step': step,
@@ -63,7 +58,6 @@ if submitted:
 
     try:
         with st.spinner("Analyzing transaction patterns..."):
-            
             prediction, proba = make_prediction(input_df)
             probs = np.array(proba).flatten()
             proba_value = float(probs[1]) if len(probs) > 1 else float(probs[0])
@@ -93,13 +87,12 @@ This transaction shows patterns consistent with fraudulent activity. Immediate r
             st.markdown('<div class="gauge-container">', unsafe_allow_html=True)
             st.markdown("**Fraud Probability Meter**")
 
-            # Color logic
             if proba_pct < 30:
-                bar_color = "#34a853" # Green
+                bar_color = "#34a853" 
             elif proba_pct < 60:
-                bar_color = "#fbbc04" # Yellow
+                bar_color = "#fbbc04" 
             else:
-                bar_color = "#ea4335" # Red
+                bar_color = "#ea4335" 
 
             st.markdown(f"""
             <div style="margin-top:12px">
@@ -123,7 +116,7 @@ This transaction shows patterns consistent with fraudulent activity. Immediate r
                 'Feature': ['Step', 'Type', 'Amount', 'Old Bal (Org)', 'New Bal (Org)', 'Old Bal (Dest)', 'New Bal (Dest)'],
                 'Value': [step, t_type, f"${amount:,.2f}", f"${oldOrig:,.2f}", f"${newOrig:,.2f}", f"${oldDest:,.2f}", f"${newDest:,.2f}"]
             })
-            st.dataframe(summary, hide_index=True, use_container_width=True)
+            st.dataframe(summary, hide_index=True, width="stretch")
 
     except Exception as e:
         st.error(f"حدث خطأ أثناء الاتصال بملف التوقع: {e}")

@@ -11,17 +11,17 @@ with st.sidebar:
     st.image("https://img.icons8.com/color/96/shield.png", width=60)
     st.markdown("## 🛡️ FinGuard 360")
     st.markdown("---")
-    st.page_link("app.py",                              label="🏠 Home Dashboard")
-    st.page_link("pages/1_Fraud_Detection.py",          label="💳 Fraud Detection")
-    st.page_link("pages/2_Credit_Risk.py",              label="🏦 Credit Risk")
-    st.page_link("pages/3_Data_Dashboard.py",           label="📊 Data Dashboard")
-    st.page_link("pages/4_Model_Insights.py",           label="🧠 Model Insights")
-    st.page_link("pages/5_Discussion.py",               label="🧑‍🏫 Discussion")
+    st.page_link("app.py", label="🏠 Home Dashboard")
+    st.page_link("pages/1_Fraud_Detection.py", label="💳 Fraud Detection")
+    st.page_link("pages/2_Credit_Risk.py", label="🏦 Credit Risk")
+    st.page_link("pages/3_Data_Dashboard.py", label="📊 Data Dashboard")
+    st.page_link("pages/4_Model_Insights.py", label="🧠 Model Insights")
+    st.page_link("pages/5_Discussion.py", label="🧑‍🏫 Discussion")
 
 @st.cache_resource
 def load_model():
-    model = joblib.load(r"Credit_risk_model\saved_models\credit_risk_model.pkl")
-    meta  = joblib.load(r"Credit_risk_model\saved_models\credit_risk_meta.pkl")
+    model = joblib.load("Credit_risk_model/saved_models/credit_risk_model.pkl")
+    meta  = joblib.load("Credit_risk_model/saved_models/credit_risk_meta.pkl")
     return model, meta
 
 model, meta = load_model()
@@ -53,10 +53,9 @@ with st.form("credit_form"):
         cred_hist   = st.number_input("Credit History Length (years)", min_value=0, max_value=30, value=5)
         default_file = st.selectbox("Previous Default on File?", meta['cat_values']['cb_person_default_on_file'])
 
-    submitted = st.form_submit_button("🏦 Predict Credit Risk", type="primary", use_container_width=True)
+    submitted = st.form_submit_button("🏦 Predict Credit Risk", type="primary", width="stretch")
 
 if submitted:
-    # Validate
     errors = []
     if income < 1000:
         errors.append("Income must be at least $1,000.")
@@ -81,8 +80,8 @@ if submitted:
         'cb_person_cred_hist_length': cred_hist
     }])
 
-    proba      = model.predict_proba(input_df)[0][1]
-    prediction = model.predict(input_df)[0]
+    proba      = float(model.predict_proba(input_df)[0][1])
+    prediction = int(model.predict(input_df)[0])
     proba_pct  = proba * 100
 
     st.markdown("---")
@@ -91,7 +90,6 @@ if submitted:
     col_decision, col_details = st.columns([1, 1])
 
     with col_decision:
-        # Risk tier
         if proba_pct < 30:
             risk_label = "🟢 Low Risk"
             decision   = "✅ APPROVED"
@@ -123,9 +121,8 @@ if submitted:
             'Factor': ['Loan Grade', 'Interest Rate', 'Loan % of Income', 'Previous Default', 'Employment Length'],
             'Value':  [loan_grade, f"{loan_int}%", f"{loan_pct*100:.0f}%", default_file, f"{emp_length} yrs"]
         })
-        st.dataframe(factors, hide_index=True, use_container_width=True)
+        st.dataframe(factors, hide_index=True, width="stretch")
 
-        # Probability bar
         st.markdown("**Default Probability Gauge**")
         if proba_pct < 30:
             bar_color = "#34a853"

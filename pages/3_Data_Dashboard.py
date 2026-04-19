@@ -12,20 +12,22 @@ with st.sidebar:
     st.image("https://img.icons8.com/color/96/shield.png", width=60)
     st.markdown("## 🛡️ FinGuard 360")
     st.markdown("---")
-    st.page_link("app.py",                              label="🏠 Home Dashboard")
-    st.page_link("pages/1_Fraud_Detection.py",          label="💳 Fraud Detection")
-    st.page_link("pages/2_Credit_Risk.py",              label="🏦 Credit Risk")
-    st.page_link("pages/3_Data_Dashboard.py",           label="📊 Data Dashboard")
-    st.page_link("pages/4_Model_Insights.py",           label="🧠 Model Insights")
-    st.page_link("pages/5_Discussion.py",               label="🧑‍🏫 Discussion")
+    st.page_link("app.py", label="🏠 Home Dashboard")
+    st.page_link("pages/1_Fraud_Detection.py", label="💳 Fraud Detection")
+    st.page_link("pages/2_Credit_Risk.py", label="🏦 Credit Risk")
+    st.page_link("pages/3_Data_Dashboard.py", label="📊 Data Dashboard")
+    st.page_link("pages/4_Model_Insights.py", label="🧠 Model Insights")
+    st.page_link("pages/5_Discussion.py", label="🧑‍🏫 Discussion")
 
 @st.cache_data
 def load_data():
-    base      = os.path.dirname(os.path.dirname(__file__))
-    fraud_df  = pd.read_csv(r"Fraud_Detection_Model/fraud_sample.csv")
-    credit_df = pd.read_csv(r"Credit_risk_model/credit_risk_dataset.csv")
-    credit_df['person_emp_length'].fillna(credit_df['person_emp_length'].median(), inplace=True)
-    credit_df['loan_int_rate'].fillna(credit_df['loan_int_rate'].median(), inplace=True)
+    # استخدام المسارات المتوافقة مع Linux و Windows
+    fraud_df  = pd.read_csv("Fraud_Detection_Model/fraud_sample.csv")
+    credit_df = pd.read_csv("Credit_risk_model/credit_risk_dataset.csv")
+    
+    # تنظيف بيانات الائتمان
+    credit_df['person_emp_length'] = credit_df['person_emp_length'].fillna(credit_df['person_emp_length'].median())
+    credit_df['loan_int_rate'] = credit_df['loan_int_rate'].fillna(credit_df['loan_int_rate'].median())
     credit_df = credit_df[credit_df['person_age'] <= 100]
     credit_df = credit_df[credit_df['person_emp_length'] <= 60]
     credit_df.drop_duplicates(inplace=True)
@@ -38,10 +40,10 @@ st.markdown("# 📊 Data Dashboard")
 # ── KPIs ─────────────────────────────────────────────────────────
 st.markdown("### 📌 Key Metrics")
 k1, k2, k3, k4 = st.columns(4)
-k1.metric("💳 Fraud Rate",          f"{fraud_df['isFraud'].mean()*100:.2f}%")
-k2.metric("⚠️ Default Rate",        f"{credit_df['loan_status'].mean()*100:.1f}%")
-k3.metric("💰 Avg Income",          f"${credit_df['person_income'].mean():,.0f}")
-k4.metric("💵 Avg Transaction",     f"${fraud_df['amount'].mean():,.0f}")
+k1.metric("💳 Fraud Rate", f"{fraud_df['isFraud'].mean()*100:.2f}%")
+k2.metric("⚠️ Default Rate", f"{credit_df['loan_status'].mean()*100:.1f}%")
+k3.metric("💰 Avg Income", f"${credit_df['person_income'].mean():,.0f}")
+k4.metric("💵 Avg Transaction", f"${fraud_df['amount'].mean():,.0f}")
 
 st.markdown("---")
 
@@ -143,11 +145,12 @@ with c4:
     sample = credit_df.sample(min(2000, len(credit_df)), random_state=42)
     colors = sample['loan_status'].map({0: '#34a853', 1: '#ea4335'})
     ax.scatter(sample['person_income'], sample['loan_amnt'],
-               c=colors, alpha=0.4, s=15)
+                c=colors, alpha=0.4, s=15)
     ax.set_xlim(0, 300000)
     ax.set_title("Income vs Loan Amount", fontsize=13, fontweight='bold')
     ax.set_xlabel("Income ($)")
     ax.set_ylabel("Loan Amount ($)")
+    
     from matplotlib.patches import Patch
     legend_elements = [Patch(facecolor='#34a853', label='No Default'),
                        Patch(facecolor='#ea4335', label='Default')]
