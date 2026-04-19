@@ -22,12 +22,6 @@ Both modules are live and accessible through an interactive dark-themed dashboar
 
 ---
 
-## Screenshots
-
-> _Add screenshots of your dashboard, fraud detection, and credit risk pages here._
-
----
-
 ## App Structure
 
 ```
