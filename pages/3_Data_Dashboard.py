@@ -21,11 +21,9 @@ with st.sidebar:
 
 @st.cache_data
 def load_data():
-    # استخدام المسارات المتوافقة مع Linux و Windows
     fraud_df  = pd.read_csv("Fraud_Detection_Model/fraud_sample.csv")
     credit_df = pd.read_csv("Credit_risk_model/credit_risk_dataset.csv")
     
-    # تنظيف بيانات الائتمان
     credit_df['person_emp_length'] = credit_df['person_emp_length'].fillna(credit_df['person_emp_length'].median())
     credit_df['loan_int_rate'] = credit_df['loan_int_rate'].fillna(credit_df['loan_int_rate'].median())
     credit_df = credit_df[credit_df['person_age'] <= 100]
@@ -91,8 +89,8 @@ with f3:
 with f4:
     st.markdown("**Correlation Heatmap (Fraud Features)**")
     fig, ax = plt.subplots(figsize=(5, 4))
-    num_fraud = fraud_df[['amount','oldbalanceOrg','newbalanceOrg',
-                           'oldbalanceDest','newbalanceDest','isFraud']]
+    num_fraud = fraud_df[['amount','oldbalanceOrg',
+                           'oldbalanceDest','isFraud']]
     sns.heatmap(num_fraud.corr(), annot=True, fmt=".2f", cmap='coolwarm',
                 linewidths=0.5, ax=ax, annot_kws={"size": 8})
     ax.set_title("Feature Correlation", fontsize=13, fontweight='bold')
